@@ -27,8 +27,9 @@ from typing import Any, Dict
 import source.admin.settings as ws_settings
 from source.training.define_trainer import define_trainer
 
-def run_training(train_module: str, train_name: str, seed: int, cudnn_benchmark: bool=True, data_root: str='',
-                 debug: int=False, args: Dict[str, Any]=None):
+
+def run_training(train_module: str, train_name: str, seed: int, cudnn_benchmark: bool = True, data_root: str = '',
+                 debug: int = False, args: Dict[str, Any] = None):
     """Run a train scripts in train_settings.
     args:
         train_module: Name of module in the "train_settings/" folder.
@@ -49,17 +50,16 @@ def run_training(train_module: str, train_name: str, seed: int, cudnn_benchmark:
 
     # update with arguments
     # this is not very robust, assumes that it will be module/dataset, and want to add something here
-    base_dir_train_module = train_module.split('/') 
+    base_dir_train_module = train_module.split('/')
     if args.train_sub is not None and args.train_sub != 0:
         base_dir_train_module[1] += '/subset_' + str(args.train_sub)
     else:
         args.train_sub = None
-    
+
     if args.scene is not None:
         base_dir_train_module[1] += '/' + args.scene
     train_module = '/'.join(base_dir_train_module)
 
-    
     settings.module_name_for_eval = train_module_for_launching
     settings.module_name = train_module
     settings.script_name = train_name
@@ -79,17 +79,17 @@ def run_training(train_module: str, train_name: str, seed: int, cudnn_benchmark:
             args_to_update[k] = v
     settings.args_to_update = args_to_update
 
-
     # dd/mm/YY
     today = date.today()
     d1 = today.strftime("%d/%m/%Y")
     print('Training:  {}  {}\nDate: {}'.format(train_module, train_name, d1))
 
     # will save the checkpoints there
+    print("settings.env.workspace_dir: ", settings.env.workspace_dir)
+    print("settings.project_path: ", settings.project_path)
     if not os.path.exists(os.path.join(settings.env.workspace_dir, settings.project_path)):
         os.makedirs(os.path.join(settings.env.workspace_dir, settings.project_path))
- 
-    
+
     # get the config file
     expr_module = importlib.import_module('train_settings.{}.{}'.format(train_module_for_launching.replace('/', '.'),
                                                                         train_name.replace('/', '.')))
@@ -99,10 +99,10 @@ def run_training(train_module: str, train_name: str, seed: int, cudnn_benchmark:
     settings.distributed = False
     settings.local_rank = 0
     settings = edict(settings.__dict__)
-    
+
     # get the config and define the trainer
     model_config = expr_func()
-    trainer = define_trainer(args=settings, settings_model=model_config, 
+    trainer = define_trainer(args=settings, settings_model=model_config,
                              debug=args.debug)
 
     # actual run
@@ -110,7 +110,7 @@ def run_training(train_module: str, train_name: str, seed: int, cudnn_benchmark:
         trainer.run_debug(load_latest=True, make_validation_first=False)
     else:
         trainer.run(load_latest=True)
-        
+
 
 def main():
     parser = argparse.ArgumentParser(description='Run a train scripts in train_settings.')
@@ -139,12 +139,11 @@ def main():
     # debugging
     parser.add_argument('--debug', type=bool, default=False,
                         help='Debug?')
-    
+
     # others
     parser.add_argument('--cudnn_benchmark', type=bool, default=True,
                         help='Set cudnn benchmark on (1) or off (0) (default is on).')
     parser.add_argument('--seed', type=int, default=0, help='Pseudo-RNG seed')
-    
 
     args = parser.parse_args()
 

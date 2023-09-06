@@ -69,10 +69,16 @@ class BaseTrainer(abc.ABC):
         grad_acc_steps: int=1,
     ):
         # parser
+
         self.settings = settings
+        # print("Env attributes:", vars(self.settings.env))
+        # print("Complete settings:", self.settings)
         self.debug = settings.debug   # to be able to easily debug
         self._set_default_settings()
         self._base_save_dir = self.settings.env.workspace_dir
+        if not self._base_save_dir:
+            raise ValueError("The workspace_dir is empty. Please ensure it's correctly set.")
+
         if not os.path.exists(self._base_save_dir):
             os.makedirs(self._base_save_dir, exist_ok=True)
         # the model weights will be saved at self._base_save_dir, self.settings.project_path

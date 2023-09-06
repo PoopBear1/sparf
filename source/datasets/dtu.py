@@ -323,9 +323,9 @@ class DTUDatasetPixelNerf(Dataset):
             with open(mask_file, 'rb') as imgin:
                 mask = np.array(Image.open(imgin), dtype=np.float32)[:, :, :3] / 255.
                 mask = mask[:, :, 0]  # (H, W)
-                mask = (mask == 1).astype(np.bool)
+                mask = (mask == 1).astype(bool)
         else:
-            mask = np.ones_like(rgb[:, :, 0], np.bool)  # (h, W)
+            mask = np.ones_like(rgb[:, :, 0], bool)  # (h, W)
 
 
         depth_filename = os.path.join(self.depth_dir, f'Depths/{scene}/depth_map_{img_id:04d}.pfm')

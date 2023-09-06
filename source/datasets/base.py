@@ -201,11 +201,11 @@ class Dataset(torch.utils.data.Dataset):
             ret.append(depth)
         if mask_depth is not None:
             mask_depth, _ = resize(mask_depth.astype(np.float32), img_shape)
-            mask_depth = np.floor(mask_depth).astype(np.bool)
+            mask_depth = np.floor(mask_depth).astype(bool)
             ret.append(mask_depth)
         if mask is not None:
             mask, _ = resize(mask.astype(np.float32), img_shape)
-            mask = np.floor(mask).astype(np.bool)
+            mask = np.floor(mask).astype(bool)
             ret.append(mask)
         return ret
 

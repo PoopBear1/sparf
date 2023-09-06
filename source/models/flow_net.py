@@ -723,7 +723,7 @@ def get_combi_list(num_views, method='all') -> torch.tensor:
         # (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), 
         # (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9),...]
         # choose num_neighbors ones
-        combi_list = np.array(list(combi_list)).astype(np.int).T
+        combi_list = np.array(list(combi_list)).astype(int).T
         # 2x(num_views*(num_views - 1)). [[0, 0, 0, ... 1, 1, 1], [1, 2, 3, ..9, 0, 2, 3, 4, 5, ]]
         # all combinations except for oneself
         assert combi_list.shape[-1] == num_views * (num_views - 1)
